@@ -1,0 +1,57 @@
+Assignment 1 – Urooj Mumtaz Joyo
+ERP ID: 17594
+
+Link To Video: https://khiibaedu-my.sharepoint.com/:v:/g/personal/u_mumtaz_17594_khi_iba_edu_pk/ERLslpvEC0hCjXB1Hhjgo6AB7Rw4g9XPSjXlhF47yVKdDg?e=8BZbYY
+Assignment1 - Urooj Mumtaz Joyo (17594).mp4
+
+Running Linux inside a docker container and show execution of Linux commands (also show the memory usage)
+
+Pull a Docker image:
+
+docker pull busybox 
+docker images 
+docker run busybox
+docker ps (ps means “Process Status”, so docker ps basically shows all of the Docker processes actively running)
+docker ps –a (all)
+
+Start a Docker container from the image:
+
+docker run –it busybox /bin/sh (creates interactive bash shell in the container)
+
+Now after being inside the Docker container and we can run any Linux command, for example:
+
+Ls (list files and directories. The contents of your current working directory)
+pwd (prints the current working directory path)
+uptime (Tell how long the Linux system has been running.)
+
+We can then exit the container by typing: 
+
+exit.
+ 
+Running an RDBMS (mysql and postgres ) inside a container, put some data in it, and run 2-3 SQL commands (Bonus) 
+
+Star off by pull the latest image for MySQL from the Docker Hub:
+
+docker pull mysql
+
+Run a container from the image:
+
+docker run -d --name sqlmy -e MYSQL_ROOT_PASSWORD=sqlpwd mysql
+
+-d (means detached mode where the container runs in the bg and we use the terminal for other commands)
+
+Connect to the running container and access the database:
+
+docker exec -it sqlmy mysql -uroot -p
+
+Now after access to database, we can create a database, a table, and insert some data:
+
+CREATE DATABASE universityrecord; 
+USE universityrecord;
+Create Table Students (Student_ID int, Name varchar(50), Program varchar(50));
+INSERT INTO Students VALUES (4872, "Cillian John", ‘BS Economics’);
+
+Running SQL commands to query the data we just inserted:
+
+SELECT * FROM Students;
+SELECT Student_ID FROM Students;
