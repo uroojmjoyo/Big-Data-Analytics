@@ -8,3 +8,4 @@ interpret
 dice-ml
 streamlit-shap
 sklearn
+altair
