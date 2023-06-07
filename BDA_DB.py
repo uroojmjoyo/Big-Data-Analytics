@@ -32,40 +32,16 @@ import altair as alt
 
 
 # In[19]:
-
-
-# Read the data from the CSV file
-file_path = r"F:\Urooj\Masters\IBA\BDA\project\combine.csv"
-if os.path.isfile(file_path):
-    df = pd.read_csv(file_path)
-else:
-    st.error("File not found. Please check the file path.")
-
-columns_with_missing_values = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", 
-                               "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019",
-                               "2020", "2021", "2022"]  # Replace with your column names
-
-# Replace '-' values with NaN
-df[columns_with_missing_values] = df[columns_with_missing_values].replace('-', np.nan)
-
-# Convert the columns with missing values to numeric type
-df[columns_with_missing_values] = df[columns_with_missing_values].astype(float)
-
-# Fill missing values with the respective mean values
-for column in columns_with_missing_values:
-    mean_value = df[column].mean()
-    df[column].fillna(mean_value, inplace=True)
-    
-df = df.drop(columns='2022')
-    
+data_loader = DataLoader()
+data_loader.load_dataset()   
 st.set_page_config(layout="wide")
-image = Image.open(r"F:\Urooj\Masters\IBA\BDA\project\1601738239.jpg")
+image = Image.open(r"1601738239.jpg")
 
 st.image(image)
 st.title('World Development Analysis')
 st.write('This is a web app to showcase demographic and financial visualization as part of BDA Project. Please adjust the value of each feature. After that, each country\'s analysis will appear.')
 
-df.columns = df.columns.str.strip()
+self.data.columns = self.data.columns.str.strip()
 
 st.sidebar.title("Dashboard Information")
 #st.sidebar.markdown("**Created by:** Urooj Mumtaz Joyo")
@@ -75,17 +51,17 @@ st.sidebar.markdown("**Project:** BDA - MLOPS - EcoTrend")
 
 with st.sidebar:
     # Create a list of country names
-    countries = df['Country Name'].unique().tolist()
-    indicators = df['Indicator Name'].unique().tolist()
+    countries = self.data['Country Name'].unique().tolist()
+    indicators = self.data['Indicator Name'].unique().tolist()
     # Country selection
     selected_country = st.selectbox('Select a Country', countries)
     selected_indicator = st.selectbox('Select an Indicator', indicators)
     selected_country2 = st.selectbox('Select Another Country for Comparison', countries)
     # Filter the data based on the selected country and indicator column
-    filtered_df = df[
-        ((df['Country Name'] == selected_country) |
-        (df['Country Name'] == selected_country2)) &
-        (df['Indicator Name'] == selected_indicator)]
+    filtered_df = self.data[
+        ((self.data['Country Name'] == selected_country) |
+        (self.data['Country Name'] == selected_country2)) &
+        (self.data['Indicator Name'] == selected_indicator)]
     # Years column start from column 5 according to python 4
     years = filtered_df.columns[4:].tolist()
     # Year selection (multiple)
@@ -168,14 +144,14 @@ st.write('Please select the country, indicator and year for which you want to pr
 
 with st.sidebar:
     # Create a list of country codes and indicator codes
-    countries = df['Country Code'].unique().tolist()
-    indicators = df['Indicator Code'].unique().tolist()
+    countries = self.data['Country Code'].unique().tolist()
+    indicators = self.data['Indicator Code'].unique().tolist()
 
     # Country code to name mapping
-    country_names = df[['Country Code', 'Country Name']].drop_duplicates().set_index('Country Code')['Country Name'].to_dict()
+    country_names = self.data[['Country Code', 'Country Name']].drop_duplicates().set_index('Country Code')['Country Name'].to_dict()
 
     # Indicator code to name mapping
-    indicator_names = df[['Indicator Code', 'Indicator Name']].drop_duplicates().set_index('Indicator Code')['Indicator Name'].to_dict()
+    indicator_names = self.data[['Indicator Code', 'Indicator Name']].drop_duplicates().set_index('Indicator Code')['Indicator Name'].to_dict()
 
     years = ['2022', '2023', '2024', '2025', '2026', '2027']
     # Country selection
@@ -183,18 +159,18 @@ with st.sidebar:
     selected_indicator = st.selectbox('Select an Indicator for Prediction', indicators, format_func=lambda x: indicator_names[x])
     selected_year = st.selectbox('Select a Year for Prediction', years)
 
-df = df[df["Indicator Code"].isin([selected_indicator])]  # Changed from 'Indicator Name'
+self.data = self.data[self.data["Indicator Code"].isin([selected_indicator])]  # Changed from 'Indicator Name'
 id_columns = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']  # Changed from 'Indicator Name'
-df = pd.melt(df, id_vars=id_columns, var_name='Year', value_name='Value')
-df = df.sort_values(['Country Name', 'Year'])
-df = df.reset_index(drop=True)
-df = df[df["Country Code"].isin([selected_country])]
+self.data = pd.melt(df, id_vars=id_columns, var_name='Year', value_name='Value')
+self.data = self.data.sort_values(['Country Name', 'Year'])
+self.data = self.data.reset_index(drop=True)
+self.data = self.data[self.data["Country Code"].isin([selected_country])]
 
-X = df.drop(columns=['Country Name', 'Indicator Name', 'Value'])  # Changed from 'Indicator Name'
+X = self.data.drop(columns=['Country Name', 'Indicator Name', 'Value'])  # Changed from 'Indicator Name'
 X['Indicator Code'] = LabelEncoder().fit_transform(X['Indicator Code'])  # Encode the Indicator Code
 X['Country Code'] = LabelEncoder().fit_transform(X['Country Code'])
 X = X.astype(int)
-y = df[['Value']]
+y = self.data[['Value']]
 
 Xt = X.copy()
 Xt['Year'] = int(selected_year)
@@ -228,7 +204,7 @@ with col2:
 
 # Line Chart
 st.write("Line Chart:")
-selected_country_data = df[df['Country Code'] == selected_country]
+selected_country_data = self.data[self.data['Country Code'] == selected_country]
 selected_country_data = selected_country_data[selected_country_data['Indicator Code'] == selected_indicator]  # Changed from 'Indicator Name'
 selected_country_data = selected_country_data[selected_country_data['Year'].astype(int) <= int(selected_year)]
 line_chart = pd.DataFrame(selected_country_data[['Year', 'Value']])
