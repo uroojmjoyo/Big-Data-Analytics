@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 from numpy import mean
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-
+from utils import DataLoader
 
 import streamlit as st
 import pickle
