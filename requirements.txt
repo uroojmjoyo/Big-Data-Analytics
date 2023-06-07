@@ -2,12 +2,14 @@ streamlit
 pandas
 numpy
 pycaret
-lime
-shap
 interpret
-dice-ml
 streamlit-shap
 sklearn
 altair
 io
 ptl
+scikit-learn
+xgboost
+lightgbm
+matplotlib
+Pillow
