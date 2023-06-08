@@ -27,7 +27,7 @@ import pickle
 import os
 from PIL import Image
 import streamlit.components.v1 as components
-import io
+#import io
 import altair as alt
 
 
