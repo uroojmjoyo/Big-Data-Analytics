@@ -41,7 +41,7 @@ st.image(image)
 st.title('World Development Analysis')
 st.write('This is a web app to showcase demographic and financial visualization as part of BDA Project. Please adjust the value of each feature. After that, each country\'s analysis will appear.')
 
-self.data.columns = self.data.columns.str.strip()
+data_loader.columns = data_loader.columns.str.strip()
 
 st.sidebar.title("Dashboard Information")
 #st.sidebar.markdown("**Created by:** Urooj Mumtaz Joyo")
@@ -51,17 +51,17 @@ st.sidebar.markdown("**Project:** BDA - MLOPS - EcoTrend")
 
 with st.sidebar:
     # Create a list of country names
-    countries = self.data['Country Name'].unique().tolist()
-    indicators = self.data['Indicator Name'].unique().tolist()
+    countries = data_loader['Country Name'].unique().tolist()
+    indicators = data_loader['Indicator Name'].unique().tolist()
     # Country selection
     selected_country = st.selectbox('Select a Country', countries)
     selected_indicator = st.selectbox('Select an Indicator', indicators)
     selected_country2 = st.selectbox('Select Another Country for Comparison', countries)
     # Filter the data based on the selected country and indicator column
-    filtered_df = self.data[
-        ((self.data['Country Name'] == selected_country) |
-        (self.data['Country Name'] == selected_country2)) &
-        (self.data['Indicator Name'] == selected_indicator)]
+    filtered_df = data_loader[
+        ((data_loader['Country Name'] == selected_country) |
+        (data_loader['Country Name'] == selected_country2)) &
+        (data_loader['Indicator Name'] == selected_indicator)]
     # Years column start from column 5 according to python 4
     years = filtered_df.columns[4:].tolist()
     # Year selection (multiple)
@@ -144,14 +144,14 @@ st.write('Please select the country, indicator and year for which you want to pr
 
 with st.sidebar:
     # Create a list of country codes and indicator codes
-    countries = self.data['Country Code'].unique().tolist()
-    indicators = self.data['Indicator Code'].unique().tolist()
+    countries = data_loader['Country Code'].unique().tolist()
+    indicators = data_loader['Indicator Code'].unique().tolist()
 
     # Country code to name mapping
-    country_names = self.data[['Country Code', 'Country Name']].drop_duplicates().set_index('Country Code')['Country Name'].to_dict()
+    country_names = data_loader[['Country Code', 'Country Name']].drop_duplicates().set_index('Country Code')['Country Name'].to_dict()
 
     # Indicator code to name mapping
-    indicator_names = self.data[['Indicator Code', 'Indicator Name']].drop_duplicates().set_index('Indicator Code')['Indicator Name'].to_dict()
+    indicator_names = data_loader[['Indicator Code', 'Indicator Name']].drop_duplicates().set_index('Indicator Code')['Indicator Name'].to_dict()
 
     years = ['2022', '2023', '2024', '2025', '2026', '2027']
     # Country selection
@@ -159,18 +159,18 @@ with st.sidebar:
     selected_indicator = st.selectbox('Select an Indicator for Prediction', indicators, format_func=lambda x: indicator_names[x])
     selected_year = st.selectbox('Select a Year for Prediction', years)
 
-self.data = self.data[self.data["Indicator Code"].isin([selected_indicator])]  # Changed from 'Indicator Name'
+data_loader = data_loader[data_loader["Indicator Code"].isin([selected_indicator])]  # Changed from 'Indicator Name'
 id_columns = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']  # Changed from 'Indicator Name'
-self.data = pd.melt(df, id_vars=id_columns, var_name='Year', value_name='Value')
-self.data = self.data.sort_values(['Country Name', 'Year'])
-self.data = self.data.reset_index(drop=True)
-self.data = self.data[self.data["Country Code"].isin([selected_country])]
+data_loader = pd.melt(df, id_vars=id_columns, var_name='Year', value_name='Value')
+data_loader = data_loader.sort_values(['Country Name', 'Year'])
+data_loader = data_loader.reset_index(drop=True)
+data_loader = data_loader[data_loader["Country Code"].isin([selected_country])]
 
-X = self.data.drop(columns=['Country Name', 'Indicator Name', 'Value'])  # Changed from 'Indicator Name'
+X = data_loader.drop(columns=['Country Name', 'Indicator Name', 'Value'])  # Changed from 'Indicator Name'
 X['Indicator Code'] = LabelEncoder().fit_transform(X['Indicator Code'])  # Encode the Indicator Code
 X['Country Code'] = LabelEncoder().fit_transform(X['Country Code'])
 X = X.astype(int)
-y = self.data[['Value']]
+y = data_loader[['Value']]
 
 Xt = X.copy()
 Xt['Year'] = int(selected_year)
@@ -204,7 +204,7 @@ with col2:
 
 # Line Chart
 st.write("Line Chart:")
-selected_country_data = self.data[self.data['Country Code'] == selected_country]
+selected_country_data = data_loader[data_loader['Country Code'] == selected_country]
 selected_country_data = selected_country_data[selected_country_data['Indicator Code'] == selected_indicator]  # Changed from 'Indicator Name'
 selected_country_data = selected_country_data[selected_country_data['Year'].astype(int) <= int(selected_year)]
 line_chart = pd.DataFrame(selected_country_data[['Year', 'Value']])
