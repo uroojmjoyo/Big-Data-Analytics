@@ -6,7 +6,6 @@ interpret
 streamlit-shap
 sklearn
 altair
-requires.io
 ptl
 scikit-learn
 xgboost
