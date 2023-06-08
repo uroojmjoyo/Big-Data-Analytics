@@ -6,7 +6,7 @@ interpret
 streamlit-shap
 sklearn
 altair
-ptl
+pil
 scikit-learn
 xgboost
 lightgbm
